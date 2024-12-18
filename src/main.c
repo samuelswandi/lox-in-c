@@ -12,8 +12,18 @@ const char *COMMA = "COMMA";
 const char *PLUS = "PLUS";
 const char *MINUS = "MINUS";
 const char *SEMICOLON = "SEMICOLON";
+
+// Assignment
 const char *EQUAL = "EQUAL";
 const char *EQUAL_EQUAL = "EQUAL_EQUAL";
+
+// Comparison
+const char *BANG = "BANG";
+const char *BANG_EQUAL = "BANG_EQUAL";
+const char *GREATER = "GREATER";
+const char *GREATER_EQUAL = "GREATER_EQUAL";
+const char *LESS = "LESS";
+const char *LESS_EQUAL = "LESS_EQUAL";
 
 const char *EOF_TOKEN = "EOF";
 const char *NULL_LITERAL = "null";
@@ -59,6 +69,15 @@ int main(int argc, char *argv[]) {
                 }
             }
 
+            // for bang_equal, need to check if the next character is also =
+            if (file_contents[i] == '!') {
+                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '=') {
+                    print_token(BANG_EQUAL, "!=", NULL_LITERAL);
+                    i++;
+                    continue;
+                }
+            }
+
             if (file_contents[i] == '(') {
                 print_token(LEFT_PAREN, "(", NULL_LITERAL);
             } else if (file_contents[i] == ')') {
@@ -81,6 +100,12 @@ int main(int argc, char *argv[]) {
                 print_token(SEMICOLON, ";", NULL_LITERAL);
             } else if (file_contents[i] == '=') {
                 print_token(EQUAL, "=", NULL_LITERAL);
+            } else if (file_contents[i] == '!') {
+                print_token(BANG, "!", NULL_LITERAL);
+            } else if (file_contents[i] == '>') {
+                print_token(GREATER, ">", NULL_LITERAL);
+            } else if (file_contents[i] == '<') {
+                print_token(LESS, "<", NULL_LITERAL);
             } else {
                 print_unexpected_character(file_contents[i], 1);
                 unexpected_character = true;
