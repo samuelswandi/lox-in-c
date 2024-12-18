@@ -6,6 +6,12 @@ const char *LEFT_PAREN = "LEFT_PAREN";
 const char *RIGHT_PAREN = "RIGHT_PAREN";
 const char *LEFT_BRACE = "LEFT_BRACE";
 const char *RIGHT_BRACE = "RIGHT_BRACE";
+const char *STAR = "STAR";
+const char *DOT = "DOT";
+const char *COMMA = "COMMA";
+const char *PLUS = "PLUS";
+const char *MINUS = "MINUS";
+const char *SEMICOLON = "SEMICOLON";
 const char *EOF_TOKEN = "EOF";
 const char *NULL_LITERAL = "null";
 
@@ -43,6 +49,18 @@ int main(int argc, char *argv[]) {
                 print_token(LEFT_BRACE, "{", NULL_LITERAL);
             } else if (file_contents[i] == '}') {
                 print_token(RIGHT_BRACE, "}", NULL_LITERAL);
+            } else if (file_contents[i] == '*') {
+                print_token(STAR, "*", NULL_LITERAL);
+            } else if (file_contents[i] == '.') {
+                print_token(DOT, ".", NULL_LITERAL);
+            } else if (file_contents[i] == ',') {
+                print_token(COMMA, ",", NULL_LITERAL);
+            } else if (file_contents[i] == '+') {
+                print_token(PLUS, "+", NULL_LITERAL);
+            } else if (file_contents[i] == '-') {
+                print_token(MINUS, "-", NULL_LITERAL);
+            } else if (file_contents[i] == ';') {
+                print_token(SEMICOLON, ";", NULL_LITERAL);
             }
         }
 
