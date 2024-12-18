@@ -2,7 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+const char *LEFT_PAREN = "LEFT_PAREN";
+const char *RIGHT_PAREN = "RIGHT_PAREN";
+const char *EOF = "EOF";
+
 char *read_file_contents(const char *filename);
+
+void print_token(const char *token_type, const char *lexeme, const char *literal) {
+    fprintf(stderr, "%s %s %s\n", token_type, lexeme, literal);
+}
 
 int main(int argc, char *argv[]) {
     // Disable output buffering
@@ -17,18 +25,29 @@ int main(int argc, char *argv[]) {
     const char *command = argv[1];
 
     if (strcmp(command, "tokenize") == 0) {
-        // You can use print statements as follows for debugging, they'll be visible when running tests.
-        // fprintf(stderr, "Logs from your program will appear here!\n");
-        
         char *file_contents = read_file_contents(argv[2]);
 
-        // Uncomment this block to pass the first stage
         if (strlen(file_contents) > 0) {
             fprintf(stderr, "Scanner not implemented\n");
             exit(1);
         } 
-        printf("EOF  null\n"); // Placeholder, remove this line when implementing the scanner
-        
+
+        // Start of the scanner
+        // Template of the scanner output: <token_type> <lexeme> <literal>
+        // First we will implement scanner for LEFT and RIGHT PARENTHESIS
+        // LEFT_PAREN ( null
+        // RIGHT_PAREN ) null
+        // EOF  null
+
+        for (int i = 0; i < strlen(file_contents); i++) {
+            if (file_contents[i] == '(') {
+                print_token(LEFT_PAREN, "(", NULL);
+            } else if (file_contents[i] == ')') {
+                print_token(RIGHT_PAREN, ")", NULL);
+            }
+        }
+
+        print_token(EOF, NULL, NULL);
         free(file_contents);
     } else {
         fprintf(stderr, "Unknown command: %s\n", command);
