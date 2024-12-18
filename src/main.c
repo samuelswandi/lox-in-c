@@ -4,6 +4,8 @@
 
 const char *LEFT_PAREN = "LEFT_PAREN";
 const char *RIGHT_PAREN = "RIGHT_PAREN";
+const char *LEFT_BRACE = "LEFT_BRACE";
+const char *RIGHT_BRACE = "RIGHT_BRACE";
 const char *EOF_TOKEN = "EOF";
 const char *NULL_LITERAL = "null";
 
@@ -32,18 +34,15 @@ int main(int argc, char *argv[]) {
     if (strcmp(command, "tokenize") == 0) {
         char *file_contents = read_file_contents(argv[2]);
 
-        // Start of the scanner
-        // Template of the scanner output: <token_type> <lexeme> <literal>
-        // First we will implement scanner for LEFT and RIGHT PARENTHESIS
-        // LEFT_PAREN ( null
-        // RIGHT_PAREN ) null
-        // EOF  null
-
         for (int i = 0; i < strlen(file_contents); i++) {
             if (file_contents[i] == '(') {
                 print_token(LEFT_PAREN, "(", NULL_LITERAL);
             } else if (file_contents[i] == ')') {
                 print_token(RIGHT_PAREN, ")", NULL_LITERAL);
+            } else if (file_contents[i] == '{') {
+                print_token(LEFT_BRACE, "{", NULL_LITERAL);
+            } else if (file_contents[i] == '}') {
+                print_token(RIGHT_BRACE, "}", NULL_LITERAL);
             }
         }
 
