@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+const char *LEFT_PAREN = "LEFT_PAREN";
+const char *RIGHT_PAREN = "RIGHT_PAREN";
+const char *FOE = "EOF";
+
 char *read_file_contents(const char *filename);
 
 void print_token(const char *token_type, const char *lexeme, const char *literal) {
@@ -12,10 +16,6 @@ int main(int argc, char *argv[]) {
     // Disable output buffering
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);
-
-    const char *LEFT_PAREN = "LEFT_PAREN";
-    const char *RIGHT_PAREN = "RIGHT_PAREN";
-    const char *EOF = "EOF";
 
     if (argc < 3) {
         fprintf(stderr, "Usage: ./your_program tokenize <filename>\n");
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        print_token(EOF, NULL, NULL);
+        print_token(FOE, NULL, NULL);
         free(file_contents);
     } else {
         fprintf(stderr, "Unknown command: %s\n", command);
