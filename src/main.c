@@ -78,6 +78,24 @@ int main(int argc, char *argv[]) {
                 }
             }
 
+            // for greater_equal, need to check if the next character is also =
+            if (file_contents[i] == '>') {
+                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '=') {
+                    print_token(GREATER_EQUAL, ">=", NULL_LITERAL);
+                    i++;
+                    continue;
+                }
+            }
+            
+            // for less_equal, need to check if the next character is also =
+            if (file_contents[i] == '<') {
+                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '=') {
+                    print_token(LESS_EQUAL, "<=", NULL_LITERAL);
+                    i++;
+                    continue;
+                }
+            }
+
             if (file_contents[i] == '(') {
                 print_token(LEFT_PAREN, "(", NULL_LITERAL);
             } else if (file_contents[i] == ')') {
