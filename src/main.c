@@ -12,6 +12,9 @@ const char *COMMA = "COMMA";
 const char *PLUS = "PLUS";
 const char *MINUS = "MINUS";
 const char *SEMICOLON = "SEMICOLON";
+const char *EQUAL = "EQUAL";
+const char *EQUAL_EQUAL = "EQUAL_EQUAL";
+
 const char *EOF_TOKEN = "EOF";
 const char *NULL_LITERAL = "null";
 
@@ -47,6 +50,15 @@ int main(int argc, char *argv[]) {
 
         bool unexpected_character = false;
         for (int i = 0; i < strlen(file_contents); i++) {
+            // for equals_equals, need to check if the next character is also =
+            if (file_contents[i] == '=') {
+                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '=') {
+                    print_token(EQUAL_EQUAL, "==", NULL_LITERAL);
+                    i++;
+                    continue;
+                }
+            }
+
             if (file_contents[i] == '(') {
                 print_token(LEFT_PAREN, "(", NULL_LITERAL);
             } else if (file_contents[i] == ')') {
@@ -67,6 +79,8 @@ int main(int argc, char *argv[]) {
                 print_token(MINUS, "-", NULL_LITERAL);
             } else if (file_contents[i] == ';') {
                 print_token(SEMICOLON, ";", NULL_LITERAL);
+            } else if (file_contents[i] == '=') {
+                print_token(EQUAL, "=", NULL_LITERAL);
             } else {
                 print_unexpected_character(file_contents[i], 1);
                 unexpected_character = true;
