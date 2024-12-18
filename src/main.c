@@ -21,6 +21,10 @@ void print_token(const char *token_type, const char *lexeme, const char *literal
     fprintf(stdout, "%s %s %s\n", token_type, lexeme, literal);
 }
 
+void print_unexpected_character(char character, int line_number) {
+    fprintf(stderr, "[line %d] Error: Unexpected character: %c\n", line_number, character);
+}
+
 void print_eof_token() {
     fprintf(stdout, "%s %s %s\n", EOF_TOKEN, "", NULL_LITERAL);
 }
@@ -40,6 +44,8 @@ int main(int argc, char *argv[]) {
     if (strcmp(command, "tokenize") == 0) {
         char *file_contents = read_file_contents(argv[2]);
 
+
+        bool unexpected_character = false;
         for (int i = 0; i < strlen(file_contents); i++) {
             if (file_contents[i] == '(') {
                 print_token(LEFT_PAREN, "(", NULL_LITERAL);
@@ -61,10 +67,19 @@ int main(int argc, char *argv[]) {
                 print_token(MINUS, "-", NULL_LITERAL);
             } else if (file_contents[i] == ';') {
                 print_token(SEMICOLON, ";", NULL_LITERAL);
+            } else {
+                print_unexpected_character(file_contents[i], 1);
+                unexpected_character = true;
             }
         }
 
         print_eof_token();
+
+        // Failed to tokenize
+        if (unexpected_character) {
+            return 65;
+        }
+
         free(file_contents);
     } else {
         fprintf(stderr, "Unknown command: %s\n", command);
