@@ -9,8 +9,6 @@ const char *RIGHT_BRACE = "RIGHT_BRACE";
 const char *STAR = "STAR";
 const char *DOT = "DOT";
 const char *COMMA = "COMMA";
-const char *PLUS = "PLUS";
-const char *MINUS = "MINUS";
 const char *SEMICOLON = "SEMICOLON";
 
 // Assignment
@@ -24,6 +22,11 @@ const char *GREATER = "GREATER";
 const char *GREATER_EQUAL = "GREATER_EQUAL";
 const char *LESS = "LESS";
 const char *LESS_EQUAL = "LESS_EQUAL";
+
+// Arithmetic
+const char *PLUS = "PLUS";
+const char *MINUS = "MINUS";
+const char *SLASH = "SLASH";
 
 const char *EOF_TOKEN = "EOF";
 const char *NULL_LITERAL = "null";
@@ -40,6 +43,13 @@ void print_unexpected_character(char character, int line_number) {
 
 void print_eof_token() {
     fprintf(stdout, "%s %s %s\n", EOF_TOKEN, "", NULL_LITERAL);
+}
+
+int jump_to_end_of_line(const char *file_contents, int i) {
+    while (i < strlen(file_contents) && file_contents[i] != '\n') {
+        i++;
+    }
+    return i;
 }
 
 int main(int argc, char *argv[]) {
@@ -96,6 +106,15 @@ int main(int argc, char *argv[]) {
                 }
             }
 
+            // for slash, need to check if next is also slash, then it's a comment
+            // if comment, skip all the way to the end of the line
+            if (file_contents[i] == '/') {
+                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '/') {
+                    i = jump_to_end_of_line(file_contents, i);
+                    continue;
+                }
+            }
+
             if (file_contents[i] == '(') {
                 print_token(LEFT_PAREN, "(", NULL_LITERAL);
             } else if (file_contents[i] == ')') {
@@ -124,6 +143,8 @@ int main(int argc, char *argv[]) {
                 print_token(GREATER, ">", NULL_LITERAL);
             } else if (file_contents[i] == '<') {
                 print_token(LESS, "<", NULL_LITERAL);
+            } else if (file_contents[i] == '/') {
+                print_token(SLASH, "/", NULL_LITERAL);
             } else {
                 print_unexpected_character(file_contents[i], 1);
                 unexpected_character = true;
