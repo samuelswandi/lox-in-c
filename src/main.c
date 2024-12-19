@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "lexeme.h"
+#include "lexeme/lexeme.h"
 
 const char *EOF_TOKEN = "EOF";
 const char *NULL_LITERAL = "null";
@@ -66,6 +66,10 @@ int main(int argc, char *argv[]) {
                 while (*c != '\n' && *c != '\0') {
                     c++;
                 }
+                line_number++;
+                continue;
+            } else if (strcmp(lexeme, NEWLINE) == 0) {
+                line_number++;
                 continue;
             } 
 

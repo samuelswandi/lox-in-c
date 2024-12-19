@@ -29,6 +29,7 @@ extern const char *MINUS;
 extern const char *SLASH;
 
 // Whitespace
+extern const char *NEWLINE;
 extern const char *COMMENT;
 extern const char *WHITESPACE;
 

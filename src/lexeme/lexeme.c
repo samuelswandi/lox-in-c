@@ -30,6 +30,7 @@ const char *MINUS = "MINUS";
 const char *SLASH = "SLASH";
 
 // Whitespace
+const char *NEWLINE = "NEWLINE";
 const char *COMMENT = "COMMENT";
 const char *WHITESPACE = "WHITESPACE";
 
@@ -98,7 +99,7 @@ const char* lexeme_from_char(char **character) {
     case '\t':
       return WHITESPACE;
     case '\n':
-      return WHITESPACE;
+      return NEWLINE;
     default:
       return NULL;
   }
