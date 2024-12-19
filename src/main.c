@@ -1,40 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-const char *LEFT_PAREN = "LEFT_PAREN";
-const char *RIGHT_PAREN = "RIGHT_PAREN";
-const char *LEFT_BRACE = "LEFT_BRACE";
-const char *RIGHT_BRACE = "RIGHT_BRACE";
-const char *STAR = "STAR";
-const char *DOT = "DOT";
-const char *COMMA = "COMMA";
-const char *SEMICOLON = "SEMICOLON";
-
-// Assignment
-const char *EQUAL = "EQUAL";
-const char *EQUAL_EQUAL = "EQUAL_EQUAL";
-
-// Comparison
-const char *BANG = "BANG";
-const char *BANG_EQUAL = "BANG_EQUAL";
-const char *GREATER = "GREATER";
-const char *GREATER_EQUAL = "GREATER_EQUAL";
-const char *LESS = "LESS";
-const char *LESS_EQUAL = "LESS_EQUAL";
-
-// Arithmetic
-const char *PLUS = "PLUS";
-const char *MINUS = "MINUS";
-const char *SLASH = "SLASH";
+#include <stdbool.h>
+#include "lexeme.h"
 
 const char *EOF_TOKEN = "EOF";
 const char *NULL_LITERAL = "null";
 
 char *read_file_contents(const char *filename);
 
-void print_token(const char *token_type, const char *lexeme, const char *literal) {
-    fprintf(stdout, "%s %s %s\n", token_type, lexeme, literal);
+void print_token(const char *lexeme, char character, const char *literal) {
+    if (strcmp(lexeme, BANG_EQUAL) == 0)  {
+        fprintf(stdout, "%s %s %s\n", lexeme, "!=", literal);
+        return;
+    } else if (strcmp(lexeme, EQUAL_EQUAL) == 0) {
+        fprintf(stdout, "%s %s %s\n", lexeme, "==", literal);
+        return;
+    } else if (strcmp(lexeme, GREATER_EQUAL) == 0) {
+        fprintf(stdout, "%s %s %s\n", lexeme, ">=", literal);
+        return;
+    } else if (strcmp(lexeme, LESS_EQUAL) == 0) {
+        fprintf(stdout, "%s %s %s\n", lexeme, "<=", literal);
+        return;
+    }
+    
+    fprintf(stdout, "%s %c %s\n", lexeme, character, literal);
 }
 
 void print_unexpected_character(char character, int line_number) {
@@ -43,13 +33,6 @@ void print_unexpected_character(char character, int line_number) {
 
 void print_eof_token() {
     fprintf(stdout, "%s %s %s\n", EOF_TOKEN, "", NULL_LITERAL);
-}
-
-int jump_to_end_of_line(const char *file_contents, int i) {
-    while (i < strlen(file_contents) && file_contents[i] != '\n') {
-        i++;
-    }
-    return i;
 }
 
 int main(int argc, char *argv[]) {
@@ -63,102 +46,36 @@ int main(int argc, char *argv[]) {
     }
 
     const char *command = argv[1];
+    int error_code = 0;
+    int line_number = 1;
 
     if (strcmp(command, "tokenize") == 0) {
         char *file_contents = read_file_contents(argv[2]);
 
+        char *c;
+        for (c = file_contents; *c != '\0'; c++) {
+            const char *lexeme = lexeme_from_char(&c);
 
-        bool unexpected_character = false;
-        for (int i = 0; i < strlen(file_contents); i++) {
-            // for equals_equals, need to check if the next character is also =
-            if (file_contents[i] == '=') {
-                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '=') {
-                    print_token(EQUAL_EQUAL, "==", NULL_LITERAL);
-                    i++;
-                    continue;
+            if (lexeme == NULL) {
+                print_unexpected_character(*c, line_number);
+                error_code = 65;
+                continue;
+            } else if (strcmp(lexeme, WHITESPACE) == 0) {
+                continue;
+            } else if (strcmp(lexeme, COMMENT) == 0) {
+                while (*c != '\n' && *c != '\0') {
+                    c++;
                 }
-            }
+                continue;
+            } 
 
-            // for bang_equal, need to check if the next character is also =
-            if (file_contents[i] == '!') {
-                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '=') {
-                    print_token(BANG_EQUAL, "!=", NULL_LITERAL);
-                    i++;
-                    continue;
-                }
-            }
-
-            // for greater_equal, need to check if the next character is also =
-            if (file_contents[i] == '>') {
-                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '=') {
-                    print_token(GREATER_EQUAL, ">=", NULL_LITERAL);
-                    i++;
-                    continue;
-                }
-            }
-            
-            // for less_equal, need to check if the next character is also =
-            if (file_contents[i] == '<') {
-                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '=') {
-                    print_token(LESS_EQUAL, "<=", NULL_LITERAL);
-                    i++;
-                    continue;
-                }
-            }
-
-            // for slash, need to check if next is also slash, then it's a comment
-            // if comment, skip all the way to the end of the line
-            if (file_contents[i] == '/') {
-                if (i + 1 < strlen(file_contents) && file_contents[i + 1] == '/') {
-                    i = jump_to_end_of_line(file_contents, i);
-                    continue;
-                }
-            }
-
-            if (file_contents[i] == '(') {
-                print_token(LEFT_PAREN, "(", NULL_LITERAL);
-            } else if (file_contents[i] == ')') {
-                print_token(RIGHT_PAREN, ")", NULL_LITERAL);
-            } else if (file_contents[i] == '{') {
-                print_token(LEFT_BRACE, "{", NULL_LITERAL);
-            } else if (file_contents[i] == '}') {
-                print_token(RIGHT_BRACE, "}", NULL_LITERAL);
-            } else if (file_contents[i] == '*') {
-                print_token(STAR, "*", NULL_LITERAL);
-            } else if (file_contents[i] == '.') {
-                print_token(DOT, ".", NULL_LITERAL);
-            } else if (file_contents[i] == ',') {
-                print_token(COMMA, ",", NULL_LITERAL);
-            } else if (file_contents[i] == '+') {
-                print_token(PLUS, "+", NULL_LITERAL);
-            } else if (file_contents[i] == '-') {
-                print_token(MINUS, "-", NULL_LITERAL);
-            } else if (file_contents[i] == ';') {
-                print_token(SEMICOLON, ";", NULL_LITERAL);
-            } else if (file_contents[i] == '=') {
-                print_token(EQUAL, "=", NULL_LITERAL);
-            } else if (file_contents[i] == '!') {
-                print_token(BANG, "!", NULL_LITERAL);
-            } else if (file_contents[i] == '>') {
-                print_token(GREATER, ">", NULL_LITERAL);
-            } else if (file_contents[i] == '<') {
-                print_token(LESS, "<", NULL_LITERAL);
-            } else if (file_contents[i] == '/') {
-                print_token(SLASH, "/", NULL_LITERAL);
-            } else {
-                print_unexpected_character(file_contents[i], 1);
-                unexpected_character = true;
-            }
+            print_token(lexeme, *c, NULL_LITERAL);
         }
 
         print_eof_token();
 
-        // Failed to tokenize
-        if (unexpected_character) {
-            return 65;
-        }
-
         free(file_contents);
+        return error_code;
     } else {
         fprintf(stderr, "Unknown command: %s\n", command);
         return 1;
