@@ -44,6 +44,26 @@ extern const char *NEWLINE;
 extern const char *COMMENT;
 extern const char *WHITESPACE;
 
+// Reserved words
+// and, class, else, false, for, fun, if, nil, or, print, return, super, this, true, var, while.
+extern const char *AND;
+extern const char *CLASS;
+extern const char *ELSE;
+extern const char *FALSE;
+extern const char *FOR;
+extern const char *FUN;
+extern const char *IF;
+extern const char *NIL;
+extern const char *OR;
+extern const char *PRINT;
+extern const char *RETURN;
+extern const char *SUPER;
+extern const char *THIS;
+extern const char *TRUE;
+extern const char *VAR;
+extern const char *WHILE;
+
+
 // Declare the function prototype
 const char* lexeme_from_char(char **character);
 

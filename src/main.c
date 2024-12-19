@@ -115,7 +115,42 @@ void print_identifier(char **character) {
     strncpy(identifier_content, start, length);
     identifier_content[length] = '\0';
 
-    fprintf(stdout, "%s %s %s\n", IDENTIFIER, identifier_content, NULL_LITERAL);
+    // if identifier is a reserved word, print the reserved word
+    if (strcmp(identifier_content, "and") == 0) {
+        fprintf(stdout, "%s %s %s\n", AND, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "class") == 0) {
+        fprintf(stdout, "%s %s %s\n", CLASS, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "else") == 0) {
+        fprintf(stdout, "%s %s %s\n", ELSE, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "false") == 0) {
+        fprintf(stdout, "%s %s %s\n", FALSE, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "for") == 0) {
+        fprintf(stdout, "%s %s %s\n", FOR, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "fun") == 0) {
+        fprintf(stdout, "%s %s %s\n", FUN, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "if") == 0) {
+        fprintf(stdout, "%s %s %s\n", IF, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "nil") == 0) {
+        fprintf(stdout, "%s %s %s\n", NIL, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "or") == 0) {
+        fprintf(stdout, "%s %s %s\n", OR, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "print") == 0) {
+        fprintf(stdout, "%s %s %s\n", PRINT, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "return") == 0) {
+        fprintf(stdout, "%s %s %s\n", RETURN, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "super") == 0) {
+        fprintf(stdout, "%s %s %s\n", SUPER, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "this") == 0) {
+        fprintf(stdout, "%s %s %s\n", THIS, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "true") == 0) {
+        fprintf(stdout, "%s %s %s\n", TRUE, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "var") == 0) {
+        fprintf(stdout, "%s %s %s\n", VAR, identifier_content, NULL_LITERAL);
+    } else if (strcmp(identifier_content, "while") == 0) {
+        fprintf(stdout, "%s %s %s\n", WHILE, identifier_content, NULL_LITERAL);
+    } else {
+        fprintf(stdout, "%s %s %s\n", IDENTIFIER, identifier_content, NULL_LITERAL);
+    }
 
     if (**character != '\0') {
         (*character)--;
@@ -193,6 +228,7 @@ int main(int argc, char *argv[]) {
 
             // identifier
             else if (strcmp(lexeme, IDENTIFIER) == 0) {
+                // if identifier is a reserved word, print the reserved word
                 print_identifier(&c);
                 continue;
             }

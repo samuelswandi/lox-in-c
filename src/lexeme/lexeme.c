@@ -45,6 +45,24 @@ const char *NEWLINE = "NEWLINE";
 const char *COMMENT = "COMMENT";
 const char *WHITESPACE = "WHITESPACE";
 
+// Reserved words
+const char *AND = "AND";
+const char *CLASS = "CLASS";
+const char *ELSE = "ELSE";
+const char *FALSE = "FALSE";
+const char *FOR = "FOR";
+const char *FUN = "FUN";
+const char *IF = "IF";
+const char *NIL = "NIL";
+const char *OR = "OR";
+const char *PRINT = "PRINT";
+const char *RETURN = "RETURN";
+const char *SUPER = "SUPER";
+const char *THIS = "THIS";
+const char *TRUE = "TRUE";
+const char *VAR = "VAR";
+const char *WHILE = "WHILE";
+
 const char* lexeme_from_char(char **character) {
   switch (**character) {
     case '(':
