@@ -22,13 +22,37 @@ void print_token(const char *lexeme, char character, const char *literal) {
     } else if (strcmp(lexeme, LESS_EQUAL) == 0) {
         fprintf(stdout, "%s %s %s\n", lexeme, "<=", literal);
         return;
-    }
-    
+    }    
+
     fprintf(stdout, "%s %c %s\n", lexeme, character, literal);
+}
+
+void print_string(char **character, int line_number) {
+    char *start = *character;
+    char *end = start;
+    
+    while (*end != '"' && *end != '\0') {
+        end++;
+    }
+
+    int length = end - start;
+    char *string_content = malloc(length + 1);
+    strncpy(string_content, start, length);
+    string_content[length] = '\0';
+    
+    fprintf(stdout, "%s \"%s\" %s\n", STRING, string_content, string_content);
+    
+    *character = end;
+    
+    free(string_content);
 }
 
 void print_unexpected_character(char character, int line_number) {
     fprintf(stderr, "[line %d] Error: Unexpected character: %c\n", line_number, character);
+}
+
+void print_string_error(int line_number) {
+    fprintf(stderr, "[line %d] Error: Unterminated string.\n", line_number);
 }
 
 void print_eof_token() {
@@ -71,7 +95,16 @@ int main(int argc, char *argv[]) {
             } else if (strcmp(lexeme, NEWLINE) == 0) {
                 line_number++;
                 continue;
-            } 
+            } else if (strcmp(lexeme, STRING) == 0) {
+                // avoid "
+                c++;
+                print_string(&c, line_number);
+                continue;
+            } else if (strcmp(lexeme, STRING_ERROR) == 0) {
+                print_string_error(line_number);
+                error_code = 65;
+                continue;
+            }
 
             print_token(lexeme, *c, NULL_LITERAL);
         }

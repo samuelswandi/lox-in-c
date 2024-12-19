@@ -28,6 +28,10 @@ extern const char *PLUS;
 extern const char *MINUS;
 extern const char *SLASH;
 
+// String
+extern const char *STRING;
+extern const char *STRING_ERROR;
+
 // Whitespace
 extern const char *NEWLINE;
 extern const char *COMMENT;

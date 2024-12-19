@@ -29,6 +29,10 @@ const char *PLUS = "PLUS";
 const char *MINUS = "MINUS";
 const char *SLASH = "SLASH";
 
+// String
+const char *STRING = "STRING";
+const char *STRING_ERROR = "STRING_ERROR";
+
 // Whitespace
 const char *NEWLINE = "NEWLINE";
 const char *COMMENT = "COMMENT";
@@ -93,7 +97,23 @@ const char* lexeme_from_char(char **character) {
       }
       (*character)--;
       return SLASH;
+    case '"':
+      (*character)++;
+      while (**character != '"' && **character != '\0') {
+        (*character)++;
+      }
 
+      if (**character != '"') {
+        return STRING_ERROR;
+      }
+
+      // if yes then return STRING until beginning again
+      (*character)--;
+      while (**character != '"') {
+        (*character)--;
+      }
+
+      return STRING;
     case ' ':
       return WHITESPACE;
     case '\t':
