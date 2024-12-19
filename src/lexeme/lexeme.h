@@ -36,6 +36,9 @@ extern const char *STRING_ERROR;
 extern const char *NUMBER;
 extern const char *NUMBER_ERROR;
 
+// Identifier
+extern const char *IDENTIFIER;
+
 // Whitespace
 extern const char *NEWLINE;
 extern const char *COMMENT;

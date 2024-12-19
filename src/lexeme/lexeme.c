@@ -37,6 +37,9 @@ const char *STRING_ERROR = "STRING_ERROR";
 const char *NUMBER = "NUMBER";
 const char *NUMBER_ERROR = "NUMBER_ERROR";
 
+// Identifier
+const char *IDENTIFIER = "IDENTIFIER";
+
 // Whitespace
 const char *NEWLINE = "NEWLINE";
 const char *COMMENT = "COMMENT";
@@ -119,16 +122,7 @@ const char* lexeme_from_char(char **character) {
 
       return STRING;
 
-    case '0':
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
+    case '0' ... '9':
       int count_dot = 0;
       char *start = *character;
       while ((**character >= '0' && **character <= '9') || **character == '.') {
@@ -150,6 +144,11 @@ const char* lexeme_from_char(char **character) {
       // if valid then return pointer to first character of number
       *character = start;
       return NUMBER;
+
+    case '_':
+    case 'a' ... 'z':
+    case 'A' ... 'Z':
+      return IDENTIFIER;
 
     case ' ':
     case '\t':

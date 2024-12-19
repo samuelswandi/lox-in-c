@@ -99,6 +99,30 @@ void print_number(char **character) {
     free(number_content);
     free(number_content_original);
 }
+ 
+void print_identifier(char **character) {
+    char *start = *character;
+    while (
+        (**character >= 'a' && **character <= 'z') 
+        || (**character >= 'A' && **character <= 'Z') 
+        || (**character >= '0' && **character <= '9')
+        || **character == '_') {
+        (*character)++;
+    }
+
+    int length = *character - start;
+    char *identifier_content = malloc(length + 1);
+    strncpy(identifier_content, start, length);
+    identifier_content[length] = '\0';
+
+    fprintf(stdout, "%s %s %s\n", IDENTIFIER, identifier_content, NULL_LITERAL);
+
+    if (**character != '\0') {
+        (*character)--;
+    }
+
+    free(identifier_content);
+}
 
 void print_unexpected_character(char character, int line_number) {
     fprintf(stderr, "[line %d] Error: Unexpected character: %c\n", line_number, character);
@@ -164,6 +188,12 @@ int main(int argc, char *argv[]) {
                 continue;
             } else if (strcmp(lexeme, NUMBER) == 0) {
                 print_number(&c);
+                continue;
+            }
+
+            // identifier
+            else if (strcmp(lexeme, IDENTIFIER) == 0) {
+                print_identifier(&c);
                 continue;
             }
 
