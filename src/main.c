@@ -28,6 +28,7 @@ void print_token(const char *lexeme, char character, const char *literal) {
 }
 
 void print_string(char **character, int line_number) {
+    (*character)++;
     char *start = *character;
     char *end = start;
     
@@ -45,6 +46,58 @@ void print_string(char **character, int line_number) {
     *character = end;
     
     free(string_content);
+}
+
+void print_number(char **character) {
+    char *start = *character;
+    int count_dot = 0;
+    // if no count dot then number would be number.0 (42.0)
+    // if count dot then number would be number.number (42.42)
+
+    while (**character >= '0' && **character <= '9' || **character == '.') {
+        if (**character == '.') {
+            count_dot++;
+        }
+
+        (*character)++;
+    }
+
+    int length = *character - start;
+    char *number_content = malloc(length + 3);
+    char *number_content_original = malloc(length + 3);
+    if (count_dot == 0) {
+        // number would be number.0 (42.0)
+        strncpy(number_content, start, length);
+        number_content[length] = '.';
+        number_content[length + 1] = '0';
+        number_content[length + 2] = '\0';
+    } else {
+        // number would be number.number (42.42)
+        strncpy(number_content, start, length);
+        number_content[length] = '\0';
+
+        // transform trailing zeros to one zero
+        int i; 
+        for (i = length - 1; i >= 0; i--) {
+            if (number_content[i] == '0') {
+                number_content[i] = '\0';
+            } else {
+                break;
+            }
+        }
+
+        if (number_content[i] == '.') {
+            number_content[i+1]= '0';
+        }
+    }
+    strncpy(number_content_original, start, length);
+    number_content_original[length] = '\0';
+
+    fprintf(stdout, "%s %s %s\n", NUMBER, number_content_original, number_content);
+
+    (*character)--;
+    free(number_content);
+    free(number_content_original);
 }
 
 void print_unexpected_character(char character, int line_number) {
@@ -80,11 +133,19 @@ int main(int argc, char *argv[]) {
         for (c = file_contents; *c != '\0'; c++) {
             const char *lexeme = lexeme_from_char(&c);
 
+            // error code first
             if (lexeme == NULL) {
                 print_unexpected_character(*c, line_number);
                 error_code = 65;
                 continue;
-            } else if (strcmp(lexeme, WHITESPACE) == 0) {
+            } else if (strcmp(lexeme, STRING_ERROR) == 0) {
+                print_string_error(line_number);
+                error_code = 65;
+                continue;
+            }  
+
+            // skip whitespace
+            else if (strcmp(lexeme, WHITESPACE) == 0) {
                 continue;
             } else if (strcmp(lexeme, COMMENT) == 0) {
                 while (*c != '\n' && *c != '\0') {
@@ -95,14 +156,14 @@ int main(int argc, char *argv[]) {
             } else if (strcmp(lexeme, NEWLINE) == 0) {
                 line_number++;
                 continue;
-            } else if (strcmp(lexeme, STRING) == 0) {
-                // avoid "
-                c++;
+            } 
+
+            // special cases
+            else if (strcmp(lexeme, STRING) == 0) {
                 print_string(&c, line_number);
                 continue;
-            } else if (strcmp(lexeme, STRING_ERROR) == 0) {
-                print_string_error(line_number);
-                error_code = 65;
+            } else if (strcmp(lexeme, NUMBER) == 0) {
+                print_number(&c);
                 continue;
             }
 
