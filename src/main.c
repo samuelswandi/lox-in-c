@@ -1,175 +1,12 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include "lexeme/lexeme.h"
 
-const char *EOF_TOKEN = "EOF";
-const char *NULL_LITERAL = "null";
+#include "tokenize/tokenize.h"
+#include "parse/parse.h"
 
 char *read_file_contents(const char *filename);
-
-void print_token(const char *lexeme, char character, const char *literal) {
-    if (strcmp(lexeme, BANG_EQUAL) == 0)  {
-        fprintf(stdout, "%s %s %s\n", lexeme, "!=", literal);
-        return;
-    } else if (strcmp(lexeme, EQUAL_EQUAL) == 0) {
-        fprintf(stdout, "%s %s %s\n", lexeme, "==", literal);
-        return;
-    } else if (strcmp(lexeme, GREATER_EQUAL) == 0) {
-        fprintf(stdout, "%s %s %s\n", lexeme, ">=", literal);
-        return;
-    } else if (strcmp(lexeme, LESS_EQUAL) == 0) {
-        fprintf(stdout, "%s %s %s\n", lexeme, "<=", literal);
-        return;
-    }    
-
-    fprintf(stdout, "%s %c %s\n", lexeme, character, literal);
-}
-
-void print_string(char **character, int line_number) {
-    (*character)++;
-    char *start = *character;
-    char *end = start;
-    
-    while (*end != '"' && *end != '\0') {
-        end++;
-    }
-
-    int length = end - start;
-    char *string_content = malloc(length + 1);
-    strncpy(string_content, start, length);
-    string_content[length] = '\0';
-    
-    fprintf(stdout, "%s \"%s\" %s\n", STRING, string_content, string_content);
-    
-    *character = end;
-    
-    free(string_content);
-}
-
-void print_number(char **character) {
-    char *start = *character;
-    int count_dot = 0;
-    // if no count dot then number would be number.0 (42.0)
-    // if count dot then number would be number.number (42.42)
-
-    while (**character >= '0' && **character <= '9' || **character == '.') {
-        if (**character == '.') {
-            count_dot++;
-        }
-
-        (*character)++;
-    }
-
-    int length = *character - start;
-    char *number_content = malloc(length + 3);
-    char *number_content_original = malloc(length + 3);
-    if (count_dot == 0) {
-        // number would be number.0 (42.0)
-        strncpy(number_content, start, length);
-        number_content[length] = '.';
-        number_content[length + 1] = '0';
-        number_content[length + 2] = '\0';
-    } else {
-        // number would be number.number (42.42)
-        strncpy(number_content, start, length);
-        number_content[length] = '\0';
-
-        // transform trailing zeros to one zero
-        int i; 
-        for (i = length - 1; i >= 0; i--) {
-            if (number_content[i] == '0') {
-                number_content[i] = '\0';
-            } else {
-                break;
-            }
-        }
-
-        if (number_content[i] == '.') {
-            number_content[i+1]= '0';
-        }
-    }
-    strncpy(number_content_original, start, length);
-    number_content_original[length] = '\0';
-
-    fprintf(stdout, "%s %s %s\n", NUMBER, number_content_original, number_content);
-
-    (*character)--;
-    free(number_content);
-    free(number_content_original);
-}
- 
-void print_identifier(char **character) {
-    char *start = *character;
-    while (
-        (**character >= 'a' && **character <= 'z') 
-        || (**character >= 'A' && **character <= 'Z') 
-        || (**character >= '0' && **character <= '9')
-        || **character == '_') {
-        (*character)++;
-    }
-
-    int length = *character - start;
-    char *identifier_content = malloc(length + 1);
-    strncpy(identifier_content, start, length);
-    identifier_content[length] = '\0';
-
-    // if identifier is a reserved word, print the reserved word
-    if (strcmp(identifier_content, "and") == 0) {
-        fprintf(stdout, "%s %s %s\n", AND, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "class") == 0) {
-        fprintf(stdout, "%s %s %s\n", CLASS, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "else") == 0) {
-        fprintf(stdout, "%s %s %s\n", ELSE, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "false") == 0) {
-        fprintf(stdout, "%s %s %s\n", FALSE, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "for") == 0) {
-        fprintf(stdout, "%s %s %s\n", FOR, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "fun") == 0) {
-        fprintf(stdout, "%s %s %s\n", FUN, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "if") == 0) {
-        fprintf(stdout, "%s %s %s\n", IF, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "nil") == 0) {
-        fprintf(stdout, "%s %s %s\n", NIL, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "or") == 0) {
-        fprintf(stdout, "%s %s %s\n", OR, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "print") == 0) {
-        fprintf(stdout, "%s %s %s\n", PRINT, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "return") == 0) {
-        fprintf(stdout, "%s %s %s\n", RETURN, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "super") == 0) {
-        fprintf(stdout, "%s %s %s\n", SUPER, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "this") == 0) {
-        fprintf(stdout, "%s %s %s\n", THIS, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "true") == 0) {
-        fprintf(stdout, "%s %s %s\n", TRUE, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "var") == 0) {
-        fprintf(stdout, "%s %s %s\n", VAR, identifier_content, NULL_LITERAL);
-    } else if (strcmp(identifier_content, "while") == 0) {
-        fprintf(stdout, "%s %s %s\n", WHILE, identifier_content, NULL_LITERAL);
-    } else {
-        fprintf(stdout, "%s %s %s\n", IDENTIFIER, identifier_content, NULL_LITERAL);
-    }
-
-    if (**character != '\0') {
-        (*character)--;
-    }
-
-    free(identifier_content);
-}
-
-void print_unexpected_character(char character, int line_number) {
-    fprintf(stderr, "[line %d] Error: Unexpected character: %c\n", line_number, character);
-}
-
-void print_string_error(int line_number) {
-    fprintf(stderr, "[line %d] Error: Unterminated string.\n", line_number);
-}
-
-void print_eof_token() {
-    fprintf(stdout, "%s %s %s\n", EOF_TOKEN, "", NULL_LITERAL);
-}
 
 int main(int argc, char *argv[]) {
     // Disable output buffering
@@ -182,64 +19,11 @@ int main(int argc, char *argv[]) {
     }
 
     const char *command = argv[1];
-    int error_code = 0;
-    int line_number = 1;
-
+    char *file_contents = read_file_contents(argv[2]);
     if (strcmp(command, "tokenize") == 0) {
-        char *file_contents = read_file_contents(argv[2]);
-
-        char *c;
-        for (c = file_contents; *c != '\0'; c++) {
-            const char *lexeme = lexeme_from_char(&c);
-
-            // error code first
-            if (lexeme == NULL) {
-                print_unexpected_character(*c, line_number);
-                error_code = 65;
-                continue;
-            } else if (strcmp(lexeme, STRING_ERROR) == 0) {
-                print_string_error(line_number);
-                error_code = 65;
-                continue;
-            }  
-
-            // skip whitespace
-            else if (strcmp(lexeme, WHITESPACE) == 0) {
-                continue;
-            } else if (strcmp(lexeme, COMMENT) == 0) {
-                while (*c != '\n' && *c != '\0') {
-                    c++;
-                }
-                line_number++;
-                continue;
-            } else if (strcmp(lexeme, NEWLINE) == 0) {
-                line_number++;
-                continue;
-            } 
-
-            // special cases
-            else if (strcmp(lexeme, STRING) == 0) {
-                print_string(&c, line_number);
-                continue;
-            } else if (strcmp(lexeme, NUMBER) == 0) {
-                print_number(&c);
-                continue;
-            }
-
-            // identifier
-            else if (strcmp(lexeme, IDENTIFIER) == 0) {
-                // if identifier is a reserved word, print the reserved word
-                print_identifier(&c);
-                continue;
-            }
-
-            print_token(lexeme, *c, NULL_LITERAL);
-        }
-
-        print_eof_token();
-
-        free(file_contents);
-        return error_code;
+        return tokenize(file_contents);
+    } else if (strcmp(command, "parse") == 0) {
+        return parse(file_contents);
     } else {
         fprintf(stderr, "Unknown command: %s\n", command);
         return 1;

@@ -1,70 +1,75 @@
 #ifndef LEXEME_H
 #define LEXEME_H
 
-// Declare all the constants as extern
-extern const char *LEFT_PAREN;
-extern const char *RIGHT_PAREN;
-extern const char *LEFT_BRACE;
-extern const char *RIGHT_BRACE;
-extern const char *STAR;
-extern const char *DOT;
-extern const char *COMMA;
-extern const char *SEMICOLON;
+#include <stdbool.h>
+
+// Declare all the ants as extern
+extern char *LEFT_PAREN;
+extern char *RIGHT_PAREN;
+extern char *LEFT_BRACE;
+extern char *RIGHT_BRACE;
+extern char *STAR;
+extern char *DOT;
+extern char *COMMA;
+extern char *SEMICOLON;
 
 // Assignment
-extern const char *EQUAL;
-extern const char *EQUAL_EQUAL;
+extern char *EQUAL;
+extern char *EQUAL_EQUAL;
 
 // Comparison
-extern const char *BANG;
-extern const char *BANG_EQUAL;
-extern const char *GREATER;
-extern const char *GREATER_EQUAL;
-extern const char *LESS;
-extern const char *LESS_EQUAL;
+extern char *BANG;
+extern char *BANG_EQUAL;
+extern char *GREATER;
+extern char *GREATER_EQUAL;
+extern char *LESS;
+extern char *LESS_EQUAL;
 
 // Arithmetic
-extern const char *PLUS;
-extern const char *MINUS;
-extern const char *SLASH;
+extern char *PLUS;
+extern char *MINUS;
+extern char *SLASH;
 
 // String
-extern const char *STRING;
-extern const char *STRING_ERROR;
+extern char *STRING;
+extern char *STRING_ERROR;
 
 // Number
-extern const char *NUMBER;
-extern const char *NUMBER_ERROR;
+extern char *NUMBER;
+extern char *NUMBER_ERROR;
 
 // Identifier
-extern const char *IDENTIFIER;
+extern char *IDENTIFIER;
 
 // Whitespace
-extern const char *NEWLINE;
-extern const char *COMMENT;
-extern const char *WHITESPACE;
+extern char *NEWLINE;
+extern char *COMMENT;
+extern char *WHITESPACE;
 
 // Reserved words
 // and, class, else, false, for, fun, if, nil, or, print, return, super, this, true, var, while.
-extern const char *AND;
-extern const char *CLASS;
-extern const char *ELSE;
-extern const char *FALSE;
-extern const char *FOR;
-extern const char *FUN;
-extern const char *IF;
-extern const char *NIL;
-extern const char *OR;
-extern const char *PRINT;
-extern const char *RETURN;
-extern const char *SUPER;
-extern const char *THIS;
-extern const char *TRUE;
-extern const char *VAR;
-extern const char *WHILE;
-
+extern char *AND;
+extern char *CLASS;
+extern char *ELSE;
+extern char *FALSE;
+extern char *FOR;
+extern char *FUN;
+extern char *IF;
+extern char *NIL;
+extern char *OR;
+extern char *PRINT;
+extern char *RETURN;
+extern char *SUPER;
+extern char *THIS;
+extern char *TRUE;
+extern char *VAR;
+extern char *WHILE;
 
 // Declare the function prototype
-const char* lexeme_from_char(char **character);
+void print_unexpected_character(char character, int line_number);
 
-#endif // LEXEME_H 
+char *lexeme_from_char(char **character);
+
+bool is_reserved_word(char *lexeme);
+
+#endif  // LEXEME_H
